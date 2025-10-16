@@ -1,49 +1,124 @@
+/* ============================
+   FIT3179 A2 – base stylesheet
+   ============================ */
+
+/* -- Theme tokens -- */
+:root{
+  --page-max: 1100px;
+  --font-body: "Open Sans", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --text: #1f2937;          /* slate-800 */
+  --muted: #6b7280;         /* slate-500 */
+  --muted-2: #4b5563;       /* slate-600 */
+  --bg: #eef2f7;            /* soft cool gray background */
+  --card: #ffffff;          /* main content “paper” */
+  --card-border: #e5e7eb;   /* slate-200 */
+  --accent: #0f766e;        /* teal-700 */
+}
+
+/* -- Global -- */
+html, body{
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.55;
+}
+
 body *{
-    font-family: 'Open Sans', sans-serif;
+  font-family: var(--font-body);
+  box-sizing: border-box;
 }
 
-h1 {
-    font-weight: 900;
+/* -- Page wrapper: white card on soft bg -- */
+.page{
+  max-width: var(--page-max);
+  width: 100%;
+  background: var(--card);
+  margin: 32px auto 64px;
+  padding: 24px 24px 40px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(16,24,40,.06);
 }
 
-body {
-    background-color: lightgray;
+/* -- Typography -- */
+h1{
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-weight: 900;
+  letter-spacing: .2px;
+  margin: 0 0 6px;
+  font-size: clamp(26px, 2.8vw, 36px);
 }
 
-.page {
-    max-width: 1200px;
-    width: 100%;
-    background-color: white;
-    margin: 0 auto;
-    padding: 50px;
-    padding-top: 35px;
-    box-sizing: border-box;
+h2{
+  font-size: clamp(18px, 2vw, 22px);
+  margin: 26px 0 8px;
+  font-weight: 700;
+  color: var(--muted-2);
 }
 
-.vis-container {
-    width: 100%;
-    min-height: 420px; 
-    box-sizing: border-box;
-    overflow: hidden;
+.small-font{
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0 0 18px;
 }
 
-.description h2,
-h1 {
-    margin-top: 0px;
+/* -- Chart containers -- */
+.vis-container{
+  width: 100%;
+  min-height: 420px;           /* keeps layout stable while loading */
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 8px;                /* breathing room for legends/axes */
+  box-shadow: 0 1px 2px rgba(0,0,0,.03);
+  overflow: hidden;
 }
 
-.description-right {
-    padding-left: 20px;
+/* -- Subtitles & captions -- */
+.subtitle{
+  font-size: 14px;
+  color: var(--muted);
+  margin: 10px 0 28px;
 }
 
-.description-left {
-    padding-right: 20px;
+.caption{
+  font-size: 13px;
+  color: var(--muted);
+  border-left: 4px solid var(--card-border);
+  background: #fafafa;
+  padding: 10px 14px;
+  margin-top: 10px;
+  border-radius: 6px;
 }
 
-.pure-g {
-    margin-bottom: 40px;
+/* -- Two-up grid (bar + scatter) -- */
+.twoup{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+@media (min-width: 980px){
+  .twoup{ grid-template-columns: 1fr 1fr; }
 }
 
-.small-font {
-    font-size: 14px;
+/* -- Layout helpers (compatible with Pure.css rows) -- */
+.pure-g{ margin-bottom: 40px; }
+
+/* -- Utilities -- */
+.mt-0{ margin-top: 0; }
+.mt-8{ margin-top: 8px; }
+.mt-16{ margin-top: 16px; }
+.mb-0{ margin-bottom: 0; }
+
+/* -- Links (sources/footer) -- */
+a{ color: var(--accent); text-decoration: none; }
+a:hover{ text-decoration: underline; }
+
+/* -- Print-friendly tweaks -- */
+@media print{
+  .page{ box-shadow: none; border-color: #ddd; }
+  .vis-container{ box-shadow: none; border-color: #ddd; }
+  a{ color: #000; text-decoration: underline; }
 }
