@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>FIT3179 A2 — Poverty & Social Assistance (Malaysia, 2019)</title>
+
+  <!-- Vega, Vega-Lite, Vega-Embed -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.25.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.17.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.22.2"></script>
+
+  <!-- Pure.css grid (like your example) -->
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+        integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Fonts + your stylesheet -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- tiny extras for subtitles and layout tweaks -->
+  <style>
+    .subtitle {
+      font-size: 14px;
+      color: #555;
+      margin: 8px 0 28px;
+      line-height: 1.5;
+    }
+    .twoup {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    @media (min-width: 980px) {
+      .twoup { grid-template-columns: 1fr 1fr; }
+    }
+    .caption {
+      font-size: 13px;
+      color: #666;
+      border-left: 4px solid #e7e7e7;
+      background: #fafafa;
+      padding: 10px 14px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <h1>Poverty & Social Assistance — Malaysia (2019)</h1>
+        <p class="small-font">Exploring absolute poverty by state and Bantuan Am recipients.</p>
+      </div>
+    </div>
+
+    <!-- Map (top) -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <div id="vis-map" class="vis-container"></div>
+        <p class="subtitle">
+          Choropleth shows <strong>absolute poverty rate (%)</strong> by state. Hover to see values and recipients.
+        </p>
+      </div>
+    </div>
+
+    <!-- Bar + Scatter side-by-side -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <section class="twoup">
+          <div id="vis-bar" class="vis-container"></div>
+          <div id="vis-scatter" class="vis-container"></div>
+        </section>
+        <p class="subtitle">
+          Left: ranking of <strong>JKM Bantuan Am recipients (count)</strong>. Right: relationship between
+          <strong>poverty (%)</strong> and <strong>recipients</strong>—note that recipients are counts (population size matters).
+        </p>
+        <div class="caption">
+          <strong>Notes.</strong> Poverty is a rate from DOSM; recipients are counts from JKM. Consider a per-capita normalisation
+          for deeper analysis. Sources: DOSM (hh_poverty_state) &amp; JKM (Bantuan Am), 2019.
+        </div>
+      </div>
+
+    </div>
+    <h2>What do we observe?</h2>
+<ul>
+  <li>
+    <strong>East Malaysia stands out on poverty.</strong>
+    The choropleth highlights higher absolute poverty rates in parts of East Malaysia. The northern
+    peninsula (e.g., Kelantan, Kedah, Perlis) is also relatively elevated, while the Klang Valley is low.
+  </li>
+  <li>
+    <strong>Recipients are concentrated, not uniform.</strong>
+    The bar chart shows <em>Terengganu</em> topping Bantuan Am recipients in 2019, followed by
+    <em>Sabah</em> and <em>Sarawak</em>. States around the Klang Valley are comparatively lower.
+  </li>
+  <li>
+    <strong>Positive but imperfect relationship.</strong>
+    The scatter suggests that states with higher poverty tend to have more recipients, but the fit isn’t exact:
+    some states receive <em>more</em> or <em>fewer</em> recipients than their poverty rate alone would predict
+    (population size, eligibility rules, and local program delivery can all influence this).
+  </li>
+  <li>
+    <strong>Outliers to pay attention to.</strong>
+    Terengganu appears high on recipients relative to several states with similar or higher poverty; meanwhile
+    W.P. Kuala Lumpur, W.P. Putrajaya and W.P. Labuan are on the low end for both poverty and recipients.
+  </li>
+  <li>
+    <strong>Next step (fairness): normalise by population.</strong>
+    Recipients are <em>counts</em>, not rates. A simple extension is recipients per 100k residents to compare
+    administrative burden across states more fairly.
+  </li>
+</ul>
+<p class="caption">
+  <strong>Reading tips.</strong> Map = rate (colour). Bar = magnitude (length). Scatter = relationship and outliers.
+  Hover for exact values. Sources: DOSM (absolute poverty by state) &amp; JKM (Bantuan Am), 2019.
+</p>
+
+  </div>
+
+    <script>
+    // Exact filenames next to index.html. Change if yours are in /vl/
+    const MAP_SPEC     = "map.vl.json";
+    const BAR_SPEC     = "barhraph.vl.json";          // note: file name has 'h' after 'bar'
+    const SCATTER_SPEC = "scatterpvisualization.vl.json";
+
+    const opts = { actions: false };
+
+    // Embed without top-level await
+    Promise.all([
+        vegaEmbed("#vis-map", MAP_SPEC, opts),
+        vegaEmbed("#vis-bar", BAR_SPEC, opts),
+        vegaEmbed("#vis-scatter", SCATTER_SPEC, opts)
+    ]).catch(err => {
+        console.error("Embed error:", err);
+        const el = document.createElement("pre");
+        el.textContent = "Embed error: " + err;
+        document.body.appendChild(el);
+    });
+    </script>
+</body>
+</html>
