@@ -1,0 +1,55 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Malaysia: Absolute Poverty by State (%) — 2019",
+    "fontSize": 18
+  },
+  "width": 900,
+  "height": 520,
+  "projection": {"type": "equalEarth"},
+  "data": {
+    "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/ne_10m_admin_1_states_provinces.topojson",
+    "format": {"type": "topojson", "feature": "ne_10m_admin_1_states_provinces"}
+  },
+  "transform": [
+    {
+      "filter": "datum.properties.adm0_a3 == 'MYS' || datum.properties.admin == 'Malaysia'"
+    },
+    {
+      "calculate": "(datum.properties.name || datum.properties.name_en || datum.properties.name_alt)",
+      "as": "state_raw"
+    },
+    {
+      "calculate": "datum.state_raw=='Kuala Lumpur' ? 'W.P. Kuala Lumpur' : datum.state_raw=='Labuan' ? 'W.P. Labuan' : datum.state_raw=='Putrajaya' ? 'W.P. Putrajaya' : datum.state_raw=='Penang' ? 'Pulau Pinang' : datum.state_raw",
+      "as": "state_norm"
+    },
+    {
+      "lookup": "state_norm",
+      "from": {
+        "data": {
+          "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/poverty_assistance_2019.csv"
+        },
+        "key": "state",
+        "fields": ["poverty", "recipients", "year"]
+      }
+    },
+    {"filter": "isValid(datum.poverty) && datum.year == 2019"}
+  ],
+  "mark": {"type": "geoshape", "stroke": "black", "strokeWidth": 1},
+  "encoding": {
+    "color": {
+      "field": "poverty",
+      "type": "quantitative",
+      "title": "Absolute Poverty (%)",
+      "scale": {"scheme": "oranges"},
+      "legend": {"format": ".1f"}
+    },
+    "tooltip": [
+      {"field": "state_norm", "title": "State"},
+      {"field": "poverty", "title": "Poverty (%)", "format": ".2f"},
+      {"field": "recipients", "title": "Recipients"},
+      {"field": "year", "title": "Year"}
+    ]
+  },
+  "config": {}
+}

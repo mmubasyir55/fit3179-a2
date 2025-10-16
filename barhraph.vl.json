@@ -1,0 +1,57 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Bantuan Am Recipients by State — 2019 (JKM)",
+    "anchor": "start"
+  },
+  "width": 930,
+  "height": 560,
+  "data": {
+    "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/jkm_bantuan_am_2019.csv"
+  },
+  "transform": [
+    {
+      "calculate": "datum.state=='Kuala Lumpur' ? 'W.P. Kuala Lumpur' : datum.state=='Labuan' ? 'W.P. Labuan' : datum.state=='Putrajaya' ? 'W.P. Putrajaya' : datum.state=='Penang' ? 'Pulau Pinang' : datum.state",
+      "as": "state_norm"
+    },
+    {"filter": "datum.year == 2019"},
+    {
+      "filter": "!test(/jumlah/i, datum.state) && !test(/jumlah/i, datum.state_norm)"
+    },
+    {
+      "window": [{"op": "rank", "as": "r"}],
+      "sort": [{"field": "recipients", "order": "descending"}]
+    }
+  ],
+  "layer": [
+    {
+      "mark": {"type": "bar"},
+      "encoding": {
+        "y": {
+          "field": "state_norm",
+          "type": "nominal",
+          "sort": "-x",
+          "title": null
+        },
+        "x": {
+          "field": "recipients",
+          "type": "quantitative",
+          "title": "Recipients (count)"
+        },
+        "tooltip": [
+          {"field": "state_norm", "title": "State"},
+          {"field": "recipients", "title": "Recipients"}
+        ]
+      }
+    },
+    {
+      "mark": {"type": "text", "align": "left", "dx": 4, "baseline": "middle"},
+      "encoding": {
+        "y": {"field": "state_norm", "type": "nominal", "sort": "-x"},
+        "x": {"field": "recipients", "type": "quantitative"},
+        "text": {"field": "recipients", "type": "quantitative"}
+      }
+    }
+  ],
+  "config": {}
+}

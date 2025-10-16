@@ -1,0 +1,39 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Poverty vs Bantuan Am Recipients — 2019",
+    "anchor": "start"
+  },
+  "width": 930,
+  "height": 440,
+  "data": {
+    "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/poverty_assistance_2019.csv"
+  },
+  "transform": [
+    {"filter": "datum.year == 2019"},
+    {
+      "calculate": "datum.state=='Kuala Lumpur' ? 'W.P. Kuala Lumpur' : datum.state=='Labuan' ? 'W.P. Labuan' : datum.state=='Putrajaya' ? 'W.P. Putrajaya' : datum.state",
+      "as": "state_norm"
+    }
+  ],
+  "mark": {"type": "circle", "opacity": 0.9},
+  "encoding": {
+    "x": {
+      "field": "recipients",
+      "type": "quantitative",
+      "title": "Recipients (count)"
+    },
+    "y": {
+      "field": "poverty",
+      "type": "quantitative",
+      "title": "Poverty rate (%)"
+    },
+    "tooltip": [
+      {"field": "state_norm", "title": "State"},
+      {"field": "poverty", "title": "Poverty (%)", "format": ".2f"},
+      {"field": "recipients", "title": "Recipients"}
+    ],
+    "color": {"field": "state_norm", "type": "nominal", "legend": null}
+  },
+  "config": {}
+}
