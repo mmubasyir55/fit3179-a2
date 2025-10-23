@@ -68,53 +68,29 @@
       </div>
     </div>
 
-    <!-- Bar + Scatter side-by-side -->
-    <div class="pure-g">
-      <div class="pure-u-1">
-        <section class="twoup">
-          <div id="vis-bar" class="vis-container"></div>
-          <div id="vis-scatter" class="vis-container"></div>
-        </section>
-        <p class="subtitle">
-          Left: ranking of <strong>JKM Bantuan Am recipients (count)</strong>. Right: relationship between
-          <strong>poverty (%)</strong> and <strong>recipients</strong>—note that recipients are counts (population size matters).
-        </p>
-        <div class="caption">
-          <strong>Notes.</strong> Poverty is a rate from DOSM; recipients are counts from JKM. Consider a per-capita normalisation
-          for deeper analysis. Sources: DOSM (hh_poverty_state) &amp; JKM (Bantuan Am), 2019.
-        </div>
-      </div>
+<!-- Map stays as-is -->
 
-    </div>
-    <h2>What do we observe?</h2>
-<ul>
-  <li>
-    <strong>East Malaysia stands out on poverty.</strong>
-    The choropleth highlights higher absolute poverty rates in parts of East Malaysia. The northern
-    peninsula (e.g., Kelantan, Kedah, Perlis) is also relatively elevated, while the Klang Valley is low.
-  </li>
-  <li>
-    <strong>Recipients are concentrated, not uniform.</strong>
-    The bar chart shows <em>Terengganu</em> topping Bantuan Am recipients in 2019, followed by
-    <em>Sabah</em> and <em>Sarawak</em>. States around the Klang Valley are comparatively lower.
-  </li>
-  <li>
-    <strong>Positive but imperfect relationship.</strong>
-    The scatter suggests that states with higher poverty tend to have more recipients, but the fit isn’t exact:
-    some states receive <em>more</em> or <em>fewer</em> recipients than their poverty rate alone would predict
-    (population size, eligibility rules, and local program delivery can all influence this).
-  </li>
-  <li>
-    <strong>Outliers to pay attention to.</strong>
-    Terengganu appears high on recipients relative to several states with similar or higher poverty; meanwhile
-    W.P. Kuala Lumpur, W.P. Putrajaya and W.P. Labuan are on the low end for both poverty and recipients.
-  </li>
-  <li>
-    <strong>Next step (fairness): normalise by population.</strong>
-    Recipients are <em>counts</em>, not rates. A simple extension is recipients per 100k residents to compare
-    administrative burden across states more fairly.
-  </li>
-</ul>
+<!-- Bar (own block + subtitle) -->
+<div class="pure-g">
+  <div class="pure-u-1">
+    <div id="vis-bar" class="vis-container"></div>
+    <p class="subtitle">Ranking of <strong>JKM Bantuan Am recipients (count)</strong> by state, 2019.</p>
+  </div>
+</div>
+
+<!-- Scatter (stacked below) -->
+<div class="pure-g">
+  <div class="pure-u-1">
+    <div id="vis-scatter" class="vis-container"></div>
+    <p class="subtitle">
+      Relationship between <strong>poverty (%)</strong> and <strong>recipients</strong>.
+      Counts reflect population size; consider a per-capita view for fairness.
+    </p>
+  </div>
+</div>
+
+
+
 <p class="caption">
   <strong>Reading tips.</strong> Map = rate (colour). Bar = magnitude (length). Scatter = relationship and outliers.
   Hover for exact values. Sources: DOSM (absolute poverty by state) &amp; JKM (Bantuan Am), 2019.
