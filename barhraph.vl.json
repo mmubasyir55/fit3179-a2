@@ -1,57 +1,84 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "title": {
-    "text": "Bantuan Am Recipients by State — 2019 (JKM)",
-    "anchor": "start"
-  },
+  "title": { "text": "Bantuan Am Recipients per 100k Residents — 2019 (JKM)", "anchor": "start" },
   "width": 930,
   "height": 560,
-  "data": {
-    "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/jkm_bantuan_am_2019.csv"
-  },
+  "data": { "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/jkm_bantuan_am_2019.csv" },
   "transform": [
     {
       "calculate": "datum.state=='Kuala Lumpur' ? 'W.P. Kuala Lumpur' : datum.state=='Labuan' ? 'W.P. Labuan' : datum.state=='Putrajaya' ? 'W.P. Putrajaya' : datum.state=='Penang' ? 'Pulau Pinang' : datum.state",
       "as": "state_norm"
     },
-    {"filter": "datum.year == 2019"},
+    { "filter": "datum.year == 2019" },
+    { "filter": "!test(/jumlah/i, datum.state) && !test(/jumlah/i, datum.state_norm)" },
+
+
     {
-      "filter": "!test(/jumlah/i, datum.state) && !test(/jumlah/i, datum.state_norm)"
+      "lookup": "state_norm",
+      "from": {
+        "data": { "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/population_state_2019.csv", "format": { "type": "csv" } },
+        "key": "state",
+        "fields": ["population"]
+      }
     },
+
+  
     {
-      "window": [{"op": "rank", "as": "r"}],
-      "sort": [{"field": "recipients", "order": "descending"}]
-    }
+      "lookup": "state_norm",
+      "from": {
+        "data": { "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/population_state_2019.csv", "format": { "type": "csv" } },
+        "key": "\ufeffstate",
+        "fields": ["population"]
+      },
+      "as": ["population_bom"]
+    },
+
+   
+    { "calculate": "isValid(datum.population) ? datum.population : datum.population_bom", "as": "pop_final" },
+
+
+    { "calculate": "isValid(datum.pop_final) ? (datum.recipients / datum.pop_final) * 100000 : null", "as": "recip_per_100k" },
+    { "filter": "isValid(datum.recip_per_100k)" },
+    {
+      "joinaggregate": [
+        { "op": "max", "field": "recip_per_100k", "as": "max_pk" },
+        { "op": "min", "field": "recip_per_100k", "as": "min_pk" }
+      ]
+    },
+{ "calculate": "datum.recip_per_100k === datum.max_pk", "as": "is_max" },
+{ "calculate": "datum.recip_per_100k === datum.min_pk", "as": "is_min" }
+
+    
+    
+    
   ],
   "layer": [
     {
-      "mark": {"type": "bar"},
+      
+      "mark": { "type": "bar" },
       "encoding": {
-        "y": {
-          "field": "state_norm",
-          "type": "nominal",
-          "sort": "-x",
-          "title": null
-        },
+        "y": { "field": "state_norm", "type": "nominal", "sort": "-x", "title": null },
         "x": {
-          "field": "recipients",
+          "field": "recip_per_100k",
           "type": "quantitative",
-          "title": "Recipients (count)"
+          "title": "Recipients per 100k residents (2019)",
+          "axis": { "format": "~r" }
         },
         "tooltip": [
-          {"field": "state_norm", "title": "State"},
-          {"field": "recipients", "title": "Recipients"}
+          { "field": "state_norm", "title": "State" },
+          { "field": "recipients", "title": "Recipients (count)", "format": "," },
+          { "field": "pop_final", "title": "Population", "format": "," },
+          { "field": "recip_per_100k", "title": "Recipients / 100k", "format": ".0f" }
         ]
       }
     },
     {
-      "mark": {"type": "text", "align": "left", "dx": 4, "baseline": "middle"},
+      "mark": { "type": "text", "align": "left", "dx": 4, "baseline": "middle" },
       "encoding": {
-        "y": {"field": "state_norm", "type": "nominal", "sort": "-x"},
-        "x": {"field": "recipients", "type": "quantitative"},
-        "text": {"field": "recipients", "type": "quantitative"}
+        "y": { "field": "state_norm", "type": "nominal", "sort": "-x" },
+        "x": { "field": "recip_per_100k", "type": "quantitative" },
+        "text": { "field": "recip_per_100k", "type": "quantitative", "format": ".0f" }
       }
     }
-  ],
-  "config": {}
+  ]
 }

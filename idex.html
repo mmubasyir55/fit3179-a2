@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>FIT3179 A2 — Poverty & Social Assistance (Malaysia, 2019)</title>
+
+  <!-- Vega, Vega-Lite, Vega-Embed -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.25.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.17.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.22.2"></script>
+
+  <!-- Pure.css grid  -->
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+        integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Fonts + stylesheet -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- tiny extras for subtitles and layout tweaks -->
+  <style>
+    .subtitle {
+      font-size: 14px;
+      color: #555;
+      margin: 8px 0 28px;
+      line-height: 1.5;
+    }
+    .twoup {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    @media (min-width: 980px) {
+      .twoup { grid-template-columns: 1fr 1fr; }
+    }
+    .caption {
+      font-size: 13px;
+      color: #666;
+      border-left: 4px solid #e7e7e7;
+      background: #fafafa;
+      padding: 10px 14px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <h1>Poverty & Social Assistance — Malaysia (2019)</h1>
+        <p class="small-font">Exploring absolute poverty by state and Bantuan Am recipients.</p>
+      </div>
+    </div>
+
+    <!-- Map (top) -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <div id="vis-map" class="vis-container"></div>
+        <p class="subtitle">
+          Choropleth shows <strong>absolute poverty rate (%)</strong> by state. Hover to see values and recipients.
+        </p>
+      </div>
+    </div>
+
+    <!-- Bar (own block + subtitle) -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <div id="vis-bar" class="vis-container"></div>
+        <p class="subtitle">Ranking of <strong>JKM Bantuan Am recipients (count)</strong> by state, 2019.</p>
+      </div>
+    </div>
+
+    <!-- Scatter (stacked below) -->
+    <div class="pure-g">
+      <div class="pure-u-1">
+        <div id="vis-scatter" class="vis-container"></div>
+        <p class="subtitle">
+          Relationship between <strong>poverty (%)</strong> and <strong>recipients</strong>.
+          Counts reflect population size; consider a per-capita view for fairness.
+        </p>
+      </div>
+    </div>
+
+    <p class="caption">
+      <strong>Reading tips.</strong> Map = rate (colour). Bar = magnitude (length). Scatter = relationship and outliers.
+      Hover for exact values. Sources: DOSM (absolute poverty by state) &amp; JKM (Bantuan Am), 2019.
+    </p>
+
+    <!-- ===== Metadata & Sources footer ===== -->
+    <footer class="meta">
+      <h2>Metadata &amp; Sources</h2>
+      <dl>
+        <dt>Project</dt>
+        <dd>FIT3179 A2 · Poverty &amp; Social Assistance (Malaysia, 2019)</dd>
+
+        <dt>DOSM Poverty</dt>
+        <dd>
+          Absolute poverty by state (2019). Catalogue:
+          <a href="https://open.dosm.gov.my/data-catalogue/hh_poverty_state" target="_blank" rel="noopener">open.dosm.gov.my/data-catalogue/hh_poverty_state</a>
+        </dd>
+
+        <dt>JKM Assistance</dt>
+        <dd>
+          Bantuan Am recipients by state (2019). Catalogue:
+          <a href="https://archive.data.gov.my/data/ms_MY/dataset/bantuan-am-mengikut-negeri/resource/24d3b9c7-5659-4085-993b-58441f43ac42" target="_blank" rel="noopener">
+            archive.data.gov.my/.../bantuan-am-mengikut-negeri
+          </a>
+        </dd>
+
+
+        <dt>Population</dt>
+        <dd>
+          State population estimates (2019) used for per-100k normalisation.
+          Data file:
+          <a href="https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/population_state_2019.csv">CSV (cleaned)</a>
+        </dd>
+
+        <dt>Geography</dt>
+        <dd>
+          Admin-1 boundaries (Natural Earth).
+          File:
+          <a href="https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/ne_10m_admin_1_states_provinces.topojson">TopoJSON (raw)</a> ·
+          Source: <a href="https://www.naturalearthdata.com/">naturalearthdata.com</a>
+        </dd>
+
+        <dt>Repo</dt>
+        <dd>
+          <a href="https://github.com/mmubasyir55/fit3179-a2">github.com/mmubasyir55/fit3179-a2</a>
+        </dd>
+
+        <dt>Notes</dt>
+        <dd class="small">
+          Recipients are normalised as <em>per 100k residents</em>. State name variants (e.g., Pulau Pinang, W.P. Kuala Lumpur) are harmonised for joins.
+        </dd>
+      </dl>
+    </footer>
+    <!-- ===== end footer ===== -->
+
+  </div>
+
+  <script>
+    // Exact filenames next to index.html.
+    const MAP_SPEC     = "map.vl.json";
+    const BAR_SPEC     = "barhraph.vl.json";          // note: file name has 'h' after 'bar'
+    const SCATTER_SPEC = "scatterpvisualization.vl.json";
+
+    const opts = { actions: false };
+
+    // Embed without top-level await
+    Promise.all([
+        vegaEmbed("#vis-map", MAP_SPEC, opts),
+        vegaEmbed("#vis-bar", BAR_SPEC, opts),
+        vegaEmbed("#vis-scatter", SCATTER_SPEC, opts)
+    ]).catch(err => {
+        console.error("Embed error:", err);
+        const el = document.createElement("pre");
+        el.textContent = "Embed error: " + err;
+        document.body.appendChild(el);
+    });
+  </script>
+</body>
+</html>

@@ -1,39 +1,79 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "title": {
-    "text": "Poverty vs Bantuan Am Recipients — 2019",
-    "anchor": "start"
-  },
+  "title": { "text": "Poverty vs Bantuan Am Recipients per 100k — 2019", "anchor": "start" },
   "width": 930,
   "height": 440,
-  "data": {
-    "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/poverty_assistance_2019.csv"
-  },
+  "data": { "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/poverty_assistance_2019.csv" },
   "transform": [
-    {"filter": "datum.year == 2019"},
+    { "filter": "datum.year == 2019" },
     {
       "calculate": "datum.state=='Kuala Lumpur' ? 'W.P. Kuala Lumpur' : datum.state=='Labuan' ? 'W.P. Labuan' : datum.state=='Putrajaya' ? 'W.P. Putrajaya' : datum.state",
       "as": "state_norm"
-    }
+    },
+
+
+    {
+      "lookup": "state_norm",
+      "from": {
+        "data": { "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/population_state_2019.csv", "format": { "type": "csv" } },
+        "key": "state",
+        "fields": ["population"]
+      }
+    },
+
+
+    {
+      "lookup": "state_norm",
+      "from": {
+        "data": { "url": "https://raw.githubusercontent.com/mmubasyir55/fit3179-a2/main/population_state_2019.csv", "format": { "type": "csv" } },
+        "key": "\ufeffstate",
+        "fields": ["population"]
+      },
+      "as": ["population_bom"]
+    },
+
+    { "calculate": "isValid(datum.population) ? datum.population : datum.population_bom", "as": "pop_final" },
+    { "calculate": "isValid(datum.pop_final) ? (datum.recipients / datum.pop_final) * 100000 : null", "as": "recip_per_100k" },
+    { "filter": "isValid(datum.recip_per_100k)" },
+    {
+      "joinaggregate": [
+        { "op": "max", "field": "recip_per_100k", "as": "max_pk" },
+        { "op": "min", "field": "recip_per_100k", "as": "min_pk" }
+      ]
+    },
+    { "calculate": "datum.recip_per_100k === datum.max_pk", "as": "is_max" },
+    { "calculate": "datum.recip_per_100k === datum.min_pk", "as": "is_min" }
+
   ],
-  "mark": {"type": "circle", "opacity": 0.9},
+  "mark": { "type": "circle", "opacity": 0.9, "stroke": "white", "strokeWidth": 1 },
   "encoding": {
     "x": {
-      "field": "recipients",
+      "field": "recip_per_100k",
       "type": "quantitative",
-      "title": "Recipients (count)"
+      "title": "Recipients per 100k residents",
+      "axis": { "format": "~r" }
     },
-    "y": {
-      "field": "poverty",
-      "type": "quantitative",
-      "title": "Poverty rate (%)"
-    },
+    "y": { "field": "poverty", "type": "quantitative", "title": "Poverty rate (%)" },
+
+
+    "size": { "value": 180 },
+
+
+    "color": {
+      "condition": [
+        { "test": "datum.is_max", "value": "#2563eb" },   /* max: blue */
+        { "test": "datum.is_min", "value": "#dc2626" }    /* min: red  */
+      ],
+      "value": "#9ca3af"                                  /* others: grey */
+}
+,
+
     "tooltip": [
-      {"field": "state_norm", "title": "State"},
-      {"field": "poverty", "title": "Poverty (%)", "format": ".2f"},
-      {"field": "recipients", "title": "Recipients"}
-    ],
-    "color": {"field": "state_norm", "type": "nominal", "legend": null}
-  },
-  "config": {}
+      { "field": "state_norm", "title": "State" },
+      { "field": "poverty", "title": "Poverty (%)", "format": ".2f" },
+      { "field": "recip_per_100k", "title": "Recipients / 100k", "format": ".0f" },
+      { "field": "pop_final", "title": "Population", "format": "," },
+      { "field": "recipients", "title": "Recipients (count)", "format": "," }
+    ]
+  }
 }
