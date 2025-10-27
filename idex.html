@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- tiny extras for subtitles and layout tweaks -->
+  
   <style>
     .subtitle {
       font-size: 14px;
@@ -50,7 +50,7 @@
 <body>
   <div class="page">
 
-    <!-- Header -->
+ 
     <div class="pure-g">
       <div class="pure-u-1">
         <h1>Poverty & Social Assistance — Malaysia (2019)</h1>
@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <!-- Bar (own block + subtitle) -->
+   
     <div class="pure-g">
       <div class="pure-u-1">
         <div id="vis-bar" class="vis-container"></div>
@@ -76,7 +76,7 @@
       </div>
     </div>
 
-    <!-- Scatter (stacked below) -->
+ 
     <div class="pure-g">
       <div class="pure-u-1">
         <div id="vis-scatter" class="vis-container"></div>
@@ -92,7 +92,7 @@
       Hover for exact values. Sources: DOSM (absolute poverty by state) &amp; JKM (Bantuan Am), 2019.
     </p>
 
-    <!-- ===== Metadata & Sources footer ===== -->
+  
     <footer class="meta">
       <h2>Metadata &amp; Sources</h2>
       <dl>
@@ -140,19 +140,19 @@
         </dd>
       </dl>
     </footer>
-    <!-- ===== end footer ===== -->
+  
 
   </div>
 
   <script>
-    // Exact filenames next to index.html.
+
     const MAP_SPEC     = "map.vl.json";
-    const BAR_SPEC     = "barhraph.vl.json";          // note: file name has 'h' after 'bar'
+    const BAR_SPEC     = "barhraph.vl.json";          
     const SCATTER_SPEC = "scatterpvisualization.vl.json";
 
     const opts = { actions: false };
 
-    // Embed without top-level await
+  
     Promise.all([
         vegaEmbed("#vis-map", MAP_SPEC, opts),
         vegaEmbed("#vis-bar", BAR_SPEC, opts),
