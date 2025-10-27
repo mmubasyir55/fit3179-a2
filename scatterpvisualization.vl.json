@@ -61,10 +61,10 @@
 
     "color": {
       "condition": [
-        { "test": "datum.is_max", "value": "#2563eb" },   /* max: blue */
-        { "test": "datum.is_min", "value": "#dc2626" }    /* min: red  */
+        { "test": "datum.is_max", "value": "#2563eb" },   
+        { "test": "datum.is_min", "value": "#dc2626" }    
       ],
-      "value": "#9ca3af"                                  /* others: grey */
+      "value": "#9ca3af"                                  
 }
 ,
 
